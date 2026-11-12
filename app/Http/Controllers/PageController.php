@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Program;
 
 class PageController extends Controller
 {
     public function home(){
-        return view('home');
+        $programs = Program::all();
+        return view('home', compact('programs'));
     }
 }

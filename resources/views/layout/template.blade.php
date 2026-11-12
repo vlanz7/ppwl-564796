@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker3.min.css">
     <title>@yield('title')</title>
 </head>
 <body>
@@ -15,6 +17,14 @@
                 <li><a href="#">About</a></li>
                 <li><a href="#">Program</a></li>
                 <li><a href="#">Contact</a></li>
+                <li>@auth
+            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                @csrf
+                <button type="submit" class="btn btn-outline-danger">
+                    Logout                    
+                </button>
+            </form>
+        @endauth</li>
             </ul>
         </nav>
     </header>
@@ -25,11 +35,8 @@
             @yield('subheadline')
             <button>@yield('buttonText')</button>
         </section>
-        <h3 align="center">@yield('informasi')</h3>
-        <section class="cards">
-            <div class="card">@yield('poin1')</div>
-            <div class="card">@yield('poin2')</div>
-            <div class="card">@yield('poin3')</div>
+        <section>
+            @yield('content')
         </section>
     </main>
 
@@ -40,5 +47,13 @@
     </footer>
 
     <script src="js/script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.date').datepicker({format: 'yyyy/mm/dd', autoclose: true});
+        });
+    </script>
 </body>
 </html>

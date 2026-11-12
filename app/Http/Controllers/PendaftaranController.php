@@ -10,60 +10,67 @@ class PendaftaranController extends Controller
 {
     public function index(Request $request)
     {
+        $batas = 5;
         $programs = Program::all();
+        $jumlahPendaftaran = Pendaftaran::count();
+        
+        $query = Pendaftaran::with(['peserta', 'program']);
         if ($request->filled('id_program')) {
-            $pendaftarans = Pendaftaran::with(['peserta', 'program'])
-                ->where('id_program', $request->id_program)
-                ->whereHas('peserta', function ($query) use ($request) {
-                    $query->where('nama', 'like', '%' . $request->nama . '%');
-                })
-                ->latest('tanggal_pendaftaran')
-                ->get();
+            $query->where('pendaftarans.id_program', $request->id_program);
         }
-        else {
-            $pendaftarans = Pendaftaran::with(['peserta', 'program'])
-                ->whereHas('peserta', function ($query) use ($request) {
-                    $query->where('nama', 'like', '%' . $request->nama . '%');
-                })
-                ->latest('tanggal_pendaftaran')
-                ->get();
+        if ($request->filled('nama')) {
+            $query->whereHas('peserta', function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->nama . '%');
+            });
         }
+        if ($request->filled('tanggal')) {
+            $query->whereDate('tanggal_pendaftaran', $request->tanggal);
+        }
+        $pendaftarans = $query
+            ->latest('tanggal_pendaftaran')
+            ->paginate($batas)
+            ->withQueryString();
 
+        $no = $batas * ($pendaftarans->currentPage() - 1);
+
+        // Query statistik tetap mengikuti filter program dan nama
+        $statistik = Pendaftaran::query();
         if ($request->filled('id_program')) {
-            $totalPendaftaran = Pendaftaran::where(
-                'id_program', $request->id_program
-            )->whereHas('peserta', function ($query) use ($request) {
-                $query->where('nama', 'like', '%' . $request->nama . '%');
-            })->count();
-            $totalBiaya = Pendaftaran::join(
-                'program', 'pendaftarans.id_program', '=', 'program.id_program'
-            )->where(
-                'pendaftarans.id_program', $request->id_program
-            )->whereHas('peserta', function ($query) use ($request) {
-                $query->where('nama', 'like', '%' . $request->nama . '%');
-            })->sum('program.biaya');
+            $statistik->where('pendaftarans.id_program', $request->id_program);
+        }
+        if ($request->filled('nama')) {
+            $statistik->whereHas('peserta', function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->nama . '%');
+            });
+        }
+        if ($request->filled('tanggal')) {
+            $statistik->whereDate('tanggal_pendaftaran', $request->tanggal);
+        }
+        $totalPendaftaran = (clone $statistik)->count();
+        $totalBiaya = (clone $statistik)
+            ->join('program', 'pendaftarans.id_program', '=', 'program.id_program')
+            ->sum('program.biaya');
+        if ($request->filled('id_program')) {
             $biayaTertinggi = Program::where(
                 'id_program', $request->id_program
             )->max('biaya');
             $biayaTerendah = Program::where(
                 'id_program', $request->id_program
             )->min('biaya');
-        }
-        else {
-            $totalPendaftaran = Pendaftaran::whereHas('peserta', function ($query) use ($request) {
-                $query->where('nama', 'like', '%' . $request->nama . '%');
-            })->count();
-            $totalBiaya = Pendaftaran::join(
-                'program', 'pendaftarans.id_program', '=', 'program.id_program'
-            )->whereHas('peserta', function ($query) use ($request) {
-                $query->where('nama', 'like', '%' . $request->nama . '%');
-            })->sum('program.biaya');
+        } else {
             $biayaTertinggi = Program::max('biaya');
             $biayaTerendah = Program::min('biaya');
         }
-        return view('pendaftaran.index', compact('pendaftarans','programs','totalPendaftaran',
-        'totalBiaya',
-        'biayaTertinggi',
-        'biayaTerendah'));
+
+        return view('pendaftaran.index', compact(
+            'pendaftarans',
+            'programs',
+            'jumlahPendaftaran',
+            'no',
+            'totalPendaftaran',
+            'totalBiaya',
+            'biayaTertinggi',
+            'biayaTerendah'
+        ));
     }
 }
