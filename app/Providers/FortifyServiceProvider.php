@@ -61,12 +61,12 @@ class FortifyServiceProvider extends ServiceProvider
             );
         });
         $this->app->singleton(LogoutResponse::class, function () {
-        return new class implements LogoutResponse {
-            public function toResponse($request)
-            {
-                return redirect('/login'); 
-            }
-        };
+            return new class implements LogoutResponse {
+                public function toResponse($request)
+                {
+                    return redirect('/login'); 
+                }
+            };
     });
     }
 }

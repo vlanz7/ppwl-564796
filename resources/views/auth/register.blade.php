@@ -27,14 +27,6 @@
                         <form method="POST" action="{{ url('/register') }}">
                             @csrf
                             <div class="mb-3">
-                                <label for="name" class="form-label">
-                                    Nama
-                                </label>
-                                <input type="text" id="name" name="name"
-                                    class="form-control"
-                                    value="{{ old('name') }}" required>
-                            </div>
-                            <div class="mb-3">
                                 <label for="email" class="form-label">
                                     Email
                                 </label>

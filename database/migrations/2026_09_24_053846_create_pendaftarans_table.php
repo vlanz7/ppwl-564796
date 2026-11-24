@@ -6,15 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pendaftarans', function (Blueprint $table) {
             $table->id('id_pendaftaran');
-            $table->foreignId('id_peserta')->constrained('pesertas', 'id_peserta');
-            $table->foreignId('id_program')->constrained('program', 'id_program');
+            $table->foreignId('id_peserta')->constrained('pesertas', 'id_peserta')->cascadeOnDelete();;
+            $table->foreignId('id_program')->constrained('program', 'id_program')->cascadeOnDelete();;
             $table->timestamp('tanggal_pendaftaran')->useCurrent();
             $table->enum('status_pendaftaran', ['Menunggu','Diverifikasi', 'Ditolak', 'Diterima'])->default('Menunggu');
             $table->text('catatan_admin')->nullable();
@@ -22,9 +19,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('pendaftarans');

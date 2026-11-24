@@ -25,7 +25,6 @@
             <div>Biaya <input type="text" name="biaya" value="{{ $program->biaya }}"></div>
             <div>Durasi <input type="text" name="durasi" value="{{ $program->durasi }}"></div>
             <div>Kuota <input type="text" name="kuota" value="{{ $program->kuota }}"></div>
-            <div>Dokumen <input type="text" name="dokumen" value="{{ $program->dokumen_wajib }}"></div>
             <div class="form-group">
                 <label>Gambar Program Saat Ini</label>
                 <div>

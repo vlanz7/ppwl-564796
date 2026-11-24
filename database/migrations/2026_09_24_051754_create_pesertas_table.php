@@ -6,15 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pesertas', function (Blueprint $table) {
             $table->id('id_peserta');
+            $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
             $table->string('nama', 100);
-            $table->string('email', 100);
             $table->string('nomor_hp', 20);
             $table->text('alamat');
             $table->enum('pendidikan_terakhir', ['SMP', 'SMA/SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2']);
@@ -24,9 +21,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('pesertas');

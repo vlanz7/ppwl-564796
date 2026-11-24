@@ -42,7 +42,6 @@
                     <div>Biaya <input type="text" name="biaya"></div>
                     <div>Durasi<input type="text" name="durasi"></div>
                     <div>Kuota <input type="text" name="kuota"></div>
-                    <div>Dokumen <input type="text" name="dokumen"></div>
                     <div class="form-group">
                         <label for="gambar">Gambar Program</label>
                         <input type="file" name="gambar" id="gambar" class="form-control" accept=".jpg,.jpeg,.png" required>

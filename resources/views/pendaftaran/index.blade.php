@@ -111,7 +111,6 @@
             <div> {{ $pendaftarans->links('pagination::bootstrap-4')  }} </div>
             <div><strong>Jumlah Pendaftaran: {{ $jumlahPendaftaran }}</strong></div>
         </div>
-        
 
         {{-- Statistik pendaftaran --}}
         <h2 class="section-title">Statistik Pendaftaran</h2>
@@ -132,6 +131,102 @@
                 <h3>Biaya Terendah</h3>
                 <p>Rp {{ number_format($biayaTerendah ?? 0, 0, ',', '.') }}</p>
             </div>
+        </div>
+
+        {{-- Pengelolaan Admin --}}
+        <h2 class="section-title">Pengelolaan Admin</h2>
+        @if (Session::has('pesan'))
+            <div class="alert alert-success">{{ Session::get('pesan') }}</div>
+        @endif
+        <div class="program-header">
+            <h3>Daftar Akun Admin</h3>
+            <button type="button" class="btn btn-add"
+                onclick="document.getElementById('formTambahAdmin').style.display='block'">
+                + Tambah Admin
+            </button>
+        </div>
+        <div id="formTambahAdmin" style="display: none; margin-bottom: 25px;">
+            <form action="{{ route('admin.store') }}" method="POST">
+                @csrf
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Konfirmasi Password</label>
+                    <input type="password" name="password_confirmation"
+                        class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-add">Simpan Admin</button>
+                <button type="button" class="btn btn-edit"
+                    onclick="document.getElementById('formTambahAdmin').style.display='none'">
+                    Batal
+                </button>
+            </form>
+        </div>
+        <div class="table-wrapper">
+            <table class="pendaftaran-table">
+                <thead>
+                    <tr><th>No</th><th>Email</th><th>Aksi</th></tr>
+                </thead>
+                <tbody>
+                    @forelse ($admins as $admin)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $admin->email }}</td>
+                            <td>
+                                <button type="button" class="btn btn-edit"
+                                    onclick="document.getElementById('editAdmin{{ $admin->id }}').style.display='block'">
+                                    Edit
+                                </button>
+                                <form action="{{ route('admin.destroy', $admin->id) }}"method="POST" style="display: inline;"
+                                    onsubmit="return confirm('Yakin ingin menghapus akun Admin ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-delete">Hapus</button>
+                                </form>
+                                <div id="editAdmin{{ $admin->id }}"style="display: none; margin-top: 15px;">
+                                    <form action="{{ route('admin.update', $admin->id) }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="form-group">
+                                            <label>Email</label>
+                                            <input type="email" name="email"
+                                                value="{{ $admin->email }}"
+                                                class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Password Baru (Opsional)</label>
+                                            <input type="password" name="password"
+                                                class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Konfirmasi Password Baru</label>
+                                            <input type="password"
+                                                name="password_confirmation"
+                                                class="form-control">
+                                        </div>
+                                        <button type="submit" class="btn btn-add">Simpan Perubahan</button>
+                                        <button type="button" class="btn btn-edit"
+                                            onclick="document.getElementById('editAdmin{{ $admin->id }}').style.display='none'">
+                                            Batal
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="empty-message">Belum ada akun Admin.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 @endsection

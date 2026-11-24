@@ -39,9 +39,9 @@
         <h2>Program yang Kami Tawarkan</h2>
 
         <div style="display: flex; gap: 10px; align-items: center;">
-            <a href="{{ route('program.create') }}" class="btn btn-add">
-                + Tambah Program
-            </a>
+        @if (auth()->user()->level === 'admin')
+            <a href="{{ route('program.create') }}" class="btn btn-add">+ Tambah Program</a>
+        @endif
         </div>
     </div>
 
@@ -62,8 +62,7 @@
                 <p><strong>Biaya:</strong> Rp {{ number_format($program->biaya, 0, ',', '.') }}</p>
                 <p><strong>Durasi:</strong> {{ $program->durasi }}</p>
                 <p><strong>Kuota:</strong> {{ $program->kuota }}</p>
-                <p><strong>Dokumen wajib:</strong> {{ $program->dokumen_wajib }}</p>
-
+                @if (auth()->user()->level === 'admin')
                 <div class="program-actions">
                     <a href="{{ route('program.edit', $program->id_program) }}" class="btn btn-edit">
                         Edit
@@ -79,6 +78,7 @@
                         </button>
                     </form>
                 </div>
+                @endif
             </div>
         @empty
             <p class="empty-message">
